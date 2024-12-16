@@ -1,0 +1,26 @@
+#!/bin/bash
+mountable=$(lsblk -lp | grep "part $" | awk '{print $1, "(" $4 ")"}')
+
+[[ "$mountable" = "" ]] && exit 0
+
+chosen=$(echo "$mountable" | dmenu -i -p "Mount drive: " | awk '{print $1}')
+
+[[ "$chosen" = "" ]] && exit 0
+
+# sudo mount "$chosen" && exit 0 to je ce mas fstab
+
+#mountpoint=$(lsblk -lp | grep "part $" | awk '{print $1}' |  dmenu -i -p "Enter mountpoint: ")
+mountpoint=$(echo -e "/mnt/usb1\n/mnt/usb2\n/mnt/usb3"  | dmenu -i -p "Enter mountpoint: ")
+
+echo "mountpoint: $mountpoint ?"
+
+#[[ "$mountpoint" != "USB1" ]] && exit 1
+
+[[ "$mountpoint" = "" ]] && exit 1
+
+
+sudo mkdir -p "$mountpoint"
+
+sudo mount "$chosen" "$mountpoint"
+
+echo "mounted to:$mountpoint" 

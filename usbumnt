@@ -1,0 +1,10 @@
+mounted=$(lsblk -lp | awk '{print $7}' | grep "/" | grep -v '/$' | grep -v '/boot$' | grep -v 'home$')
+
+[[ "$mounted" = "" ]] && exit 0
+[[ "$mounted" = " " ]] && exit 0
+
+chosen=$(echo "$mounted" | dmenu -i -p "what to unmount: ")
+
+sudo umount "$chosen"
+
+echo "unmounted $chosen"
