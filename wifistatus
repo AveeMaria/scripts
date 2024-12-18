@@ -1,0 +1,7 @@
+#/!bin/bash
+
+status=$(nmcli radio wifi)
+
+[ "$status" = "enabled" ] && echo "on"
+[ "$status" = "disabled" ] && echo "off" 
+

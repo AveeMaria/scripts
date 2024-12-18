@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# bloated script kr neznam bashat!
+gor=$(uptime --pretty)
+
+h=$(echo "$gor" | awk '{print $2}')
+
+m=$(echo "$gor" | awk '{print $4}')
+
+[[ "$m" == "" ]] && echo "$h m" && exit 1
+
+[[ "$m" != "" ]] && echo "$h h $m m" && exit 1
+
