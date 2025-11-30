@@ -1,0 +1,41 @@
+#!/bin/sh
+
+#Simple X screen casting tool.
+
+primary=$(xrandr | grep " connected " | grep "eDP" | grep " primary " | awk '{print $1}')
+primary=$(echo -n "$primary")
+
+if [ -z "$primary" ]; then
+    echo "Can't find primary display - how do you even read this?!"
+    exit 1
+fi
+
+selected=$(xrandr | grep " connected " | grep -v " primary " | awk '{print $1}' | dmenu)
+selected=$(echo -n "$selected")
+
+if [ -z "$selected" ]; then
+    echo "No secondary display selected!"
+    exit 1
+fi
+
+mode=$(printf "%s\n" "extended" "duplicated" | dmenu)
+mode=$(echo -n "$mode")
+
+if [ -z "$mode" ]; then
+    echo "Mode not selected!"
+    exit 1
+fi
+
+if [[ "$mode" == "duplicated" ]];then 
+  xrandr --output $selected --same-as $primary --auto 
+else
+  if [[ "$mode" == "extended" ]]; then
+    position=$(printf "%s\n" "right-of" "left-of" "above" "below" | dmenu)
+    position=$(echo -n "$position")
+
+    xrandr --output $selected --"$position" $primary --auto
+  else
+    echo "Wrong mode selected"
+    exit 1
+  fi
+fi

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+#script for connecting to most wifi networks.
+
+SSID=$(nmcli -t -f SSID dev wifi list | sort | uniq | grep . | dmenu -l 10)
+
+PASS=$(printf '\n' | dmenu -p "Password for $SSID: ")
+
+nmcli dev wifi connect "$SSID" password "$PASS" 

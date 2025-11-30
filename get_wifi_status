@@ -1,0 +1,9 @@
+#/!bin/bash
+
+#script for slstatus visual representation of wifi status (enabled/disabled)
+
+if [[ $(wifi | awk '{print $3}') == "on" ]]; then
+  echo -e "\U0001F4F6"
+else
+  echo -e "\U1F4E1"
+fi

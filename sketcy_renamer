@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#rename *.JPG files to 1-n.jpg and 
+
+folder="$(pwd)"
+count=${1:-0}
+
+for file in "$folder"/*.JPG "$folder"/*.jpg; do
+  [ -e "$file" ] || continue
+
+  mv "$file" "$folder/$count.jpg"
+  echo "Renamed $file -> $count.jpg"
+  count=$((count + 1))
+done

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#select emoji and put it in clipboard. Requires emoji.txt
+
+selected_emoji=$(paste -d ' ' - - < emoji.txt | awk '{print $1 " " $2}' | dmenu -l 11 -fn "Noto Color Emoji:size=20" | awk '{print $1}')
+
+echo "$selected_emoji" | xclip -selection primary 
+echo "$selected_emoji" | xclip -selection clipboard 
+notify-send -t 2000 "Copied $selected_emoji copied."

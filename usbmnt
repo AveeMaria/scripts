@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#modified Luke Smith's USB mounting script
+
+mountable=$(lsblk -lp | grep "part $" | awk '{print $1, "(" $4 ")"}')
+
+[[ "$mountable" = "" ]] && notify-send -t 3000 "No USB drive(s)" && exit 0
+
+chosen=$(echo "$mountable" | dmenu -i -p "Mount drive: " | awk '{print $1}')
+
+[[ "$chosen" = "" ]] && exit 0
+
+# sudo mount "$chosen" && exit 0 to je ce mas fstab
+
+#mountpoint=$(lsblk -lp | grep "part $" | awk '{print $1}' |  dmenu -i -p "Enter mountpoint: ")
+mountpoint=$(echo -e "/mnt/usb"  | dmenu -i -p "Enter mountpoint: ")
+
+#echo "mountpoint: $mountpoint ?"
+
+[[ "$mountpoint" = "" ]] && exit 1
+
+mkdir -p "$mountpoint"
+
+mount "$chosen" "$mountpoint"
+
+notify-send -t 3000 "mounted to:$mountpoint" 

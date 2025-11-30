@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#screenshot crop tool
+
+tmpfile=$(mktemp /tmp/snip.XXXXXX.png)
+
+eval "$(slop -f "X=%x Y=%y W=%w H=%h")" || exit 1
+
+maim -g "${W}x${H}+${X}+${Y}" "$tmpfile"
+
+xclip -selection clipboard -t image/png -i "$tmpfile"
+
+#play shutter sound
+#canberra-gtk-play -i camera-shutter &>/dev/null &
+
+notify-send "Screenshot copied to clipboard!" || echo "Snip copied."
+
+#rm "$tmpfile"

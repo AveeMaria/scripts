@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#modified Luke Smith's USB unmounting script
+
+mounted=$(lsblk -lp | awk '{print $7}' | grep "/" | grep -vE '^/$|/boot$|/home$')
+
+if [[ -z "$mounted" ]]; then
+    notify-send -t 3000 "No mounted USB"
+    exit 0
+fi
+
+chosen=$(echo "$mounted" | dmenu -i -p "Unmount which:")
+[[ -z "$chosen" ]] && exit 0
+
+umount "$chosen"
+notify-send -t 3000 "Unmounted $chosen"

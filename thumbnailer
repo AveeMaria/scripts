@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#script for creating 1x, 2x, photos and thumbnails for fast website development
+#run script in folder where at least 2x sized original photos are
+
+mkdir -p 1x 2x thumbs/1x thumbs/2x
+
+for img in *.jpg; do
+  base=$(basename "$img" .jpg)
+
+  ### Full photos ###
+  # 1x photo (max width 1920px)
+  magick "$img" -resize 1920x1920\> -quality 92 "1x/${base}-1920w.jpg"
+
+  # 2x photo (max width 3840px)
+  magick "$img" -resize 3840x3840\> -quality 92 "2x/${base}-3840w.jpg"
+
+  ### Thumbnails ###
+  # 1x thumbnail (max width 480px)
+  magick "$img" -resize 480x480\> -quality 92 "thumbs/1x/${base}-480w.jpg"
+
+  # 2x thumbnail (max width 960px)
+  magick "$img" -resize 960x960\> -quality 92 "thumbs/2x/${base}-960w.jpg"
+
+  echo "Finished $base conversion."
+done

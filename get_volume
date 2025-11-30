@@ -1,0 +1,13 @@
+#!/bin/sh
+
+#visual volume status representation script for slstatus
+
+vol=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null)
+
+volperc=$(echo "$vol" | awk '{printf "%.0f", $2 * 100}')
+
+if echo "$vol" | grep -q MUTED; then
+    echo "🔇 $volperc%"
+else
+    echo "🔊 $volperc%"
+fi
