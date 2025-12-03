@@ -2,10 +2,12 @@
 
 #script for monitoring power draw
 
-awk '{sum += $1} END {printf "%.2f W\n", sum/1000000}' \
-    /sys/class/power_supply/BAT0/power_now
+status=$(cat /sys/class/power_supply/BAT0/status)
 
-#for 2 battery systems:
-#awk '{sum += $1} END {printf "%.2f W\n", sum/1000000}' \
-  #  /sys/class/power_supply/BAT0/power_now \
-  #  /sys/class/power_supply/BAT2/power_now
+discharge=$(awk '{sum += $1} END {printf "%.2f W\n", sum/1000000}' /sys/class/power_supply/BAT0/power_now)
+
+if [[ $status == "Charging" ]]; then
+  echo "🔺$discharge"
+else
+  echo "🔻$discharge"
+fi

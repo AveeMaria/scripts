@@ -6,8 +6,16 @@ vol=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null)
 
 volperc=$(echo "$vol" | awk '{printf "%.0f", $2 * 100}')
 
-if echo "$vol" | grep -q MUTED; then
-    echo "🔇 $volperc%"
+if [[ $volperc == 100 ]]; then
+  if echo "$vol" | grep -q MUTED; then
+      echo "🔇$volperc%"
+  else
+      echo "🔊$volperc%"
+  fi
 else
-    echo "🔊 $volperc%"
+  if echo "$vol" | grep -q MUTED; then
+      echo "🔇 $volperc%"
+  else
+      echo "🔊 $volperc%"
+  fi
 fi

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#script for displaying brightness in slstatus
+
+brightness=$(brightnessctl -m | tr "," " " | awk '{print $4}' | tr -d ' ')
+
+if [[ $brightness == "100%" ]]; then
+  echo "$brightness"
+else
+  echo " $brightness"
+fi
