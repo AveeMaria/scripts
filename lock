@@ -1,0 +1,20 @@
+#!/bin/sh
+
+#mute audio
+amixer set Master 0% > /dev/null
+
+i3lock -e -c 000000 \
+  -i /home/gapi/scripts/PRIVATE/lock.jpg \
+  --verif-text="" \
+  --wrong-text="" \
+  --noinput-text="" \
+  --lock-text="" \
+  --lockfailed-text="" \
+  &
+
+sleep 0.5
+
+#screen of
+xset dpms force off
+echo $DISPLAY
+echo $XAUTHORITY
