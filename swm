@@ -1,0 +1,94 @@
+#!/bin/bash
+
+#simple wallpaper manager for X. Bind it to any DWM key and toggle between image and video wallpaper or start/stop video wallpaper
+#depends on xwinwrap (AUR xwinwrap-git) and mpv video player.
+
+#example of config file in ~/.config/swm
+  #SOCKET="/tmp/mpv-socket"
+  #VID_BG_PATH="$HOME/Downloads/video.mp4" (all formats MPV supports)
+  #IMG_BG_PATH="$HOME/Downloads/image.jpg"
+
+stop_wp_vid() {
+  echo '{ "command": ["set_property", "pause", true] }' | socat - "$SOCKET" &> /dev/null
+}
+
+start_wp_vid() {
+  echo '{ "command": ["set_property", "pause", false] }' | socat - "$SOCKET" &> /dev/null
+}
+
+toggle_wp_vid() {
+  echo '{ "command": ["cycle", "pause"] }' | socat - "$SOCKET" &> /dev/null
+}
+
+set_wp_img() {
+  #kill video bg if any
+  ps aux | grep mpv | grep xwinwrap | awk '{print $2}' | xargs -r kill
+  
+  #clear any previous image bg?
+  xwallpaper --clear
+
+  #start image bg
+  xwallpaper --maximize "$IMG_BG_PATH" &> /dev/null
+}
+
+set_wp_vid() {
+  #kill image bg
+  xwallpaper --clear
+
+  #kill any previous video bg?
+  ps aux | grep mpv | grep xwinwrap | awk '{print $2}' | xargs -r kill
+  
+  rm -f $SOCKET
+
+  #start video bg
+  xwinwrap -g 1920x1050+0+0 -ni -nf -ov -- \
+  mpv --wid=%WID \
+      --no-audio \
+      --loop \
+      --no-osc \
+      --no-border \
+      --vo=gpu \
+      --vf=fps=30:round=down \
+      --hwdec=auto \
+      --framedrop=vo \
+      --panscan=1 \
+      --input-ipc-server="$SOCKET" \
+      "$VID_BG_PATH" &> /dev/null &
+
+  sleep 0.3
+  pkill -USR1 picom
+}
+
+source ~/.config/swm
+
+SOCKET=${SOCKET:-"/tmp/mpv-socket"}
+selected_option=$(printf "%s\n" "exit" "image" "video" "toggle" "start" "stop" | dmenu -p "Manage wallpaper" -l 6)
+selected_option=$(echo -n $selected_option)
+
+if [ -z "$selected_option" ]; then
+    exit 1
+fi
+
+case "$selected_option" in
+    exit|"")
+        exit 0
+        ;;
+    start)
+        start_wp_vid
+        ;;
+    stop)
+        stop_wp_vid
+        ;;
+    toggle)
+        toggle_wp_vid
+        ;;
+    image)
+        set_wp_img
+        ;;
+    video)
+        set_wp_vid
+        ;;
+    *)
+        exit 1
+        ;;
+esac
